@@ -9,6 +9,10 @@ module Voorhees
                   :required,  :defaults,  :parameters,
                   :base_uri
     
+    def initialize(caller_class)
+      @caller_class = caller_class
+    end
+    
     def path=(uri)
       @path = URI.parse(uri)
     end
@@ -89,8 +93,7 @@ module Voorhees
       end
     
       def parse_response(response)
-        json = JSON.parse(response.body)
-        Voorhees::Response.new(json, response.body, response.code, response.message, response.to_hash)
+        Voorhees::Response.new(@caller_class, JSON.parse(response.body))
         
       rescue JSON::ParserError
         raise Voorhees::ParseError

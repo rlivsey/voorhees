@@ -2,14 +2,17 @@ module Voorhees
   
   class Response
     
-    attr_reader :parsed, :body, :code, :message, :headers
+    attr_reader :klass, :json
     
-    def initialize(parsed, body, code, message, headers={})
-      @parsed = parsed
-      @body     = body
-      @code     = code.to_i
-      @message  = message
-      @headers  = headers
+    def initialize(klass, json)
+      @klass = klass
+      @json  = json
+    end
+    
+    def to_objects
+      @json.collect do |item|
+        @klass.new_from_json(item)
+      end
     end
     
   end
