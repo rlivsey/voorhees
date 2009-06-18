@@ -1,10 +1,18 @@
+require 'logger'
+
 module Voorhees
   module Config    
     class << self
       
       # the configuration hash itself
       def configuration
-        @configuration ||= {}
+        @configuration ||= defaults
+      end
+      
+      def defaults
+        {
+          :logger => defined?(RAILS_DEFAULT_LOGGER) ? RAILS_DEFAULT_LOGGER : Logger.new(STDOUT)
+        }
       end
       
       def [](key)
@@ -48,7 +56,7 @@ module Voorhees
       end      
       
       def clear
-        @configuration = {}
+        @configuration = defaults
       end
       
       # allow getting and setting properties via Voorhees::Config.xxx
