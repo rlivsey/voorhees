@@ -11,9 +11,10 @@ module Voorhees
       
       def defaults
         {
-          :logger   => defined?(RAILS_DEFAULT_LOGGER) ? RAILS_DEFAULT_LOGGER : Logger.new(STDOUT),
-          :timeout  => 10,
-          :retries  => 0
+          :logger              => defined?(RAILS_DEFAULT_LOGGER) ? RAILS_DEFAULT_LOGGER : Logger.new(STDOUT),
+          :timeout             => 10,
+          :retries             => 0,
+          :json_parameter_name => "object_request"
         }
       end
       
@@ -49,11 +50,12 @@ module Voorhees
       # 
       # ==== Examples
       #   Voorhees::Config.use do |config|
-      #     config[:debug] = true
+      #     config[:debug]    = true
+      #     config.something  = false
       #   end
       # 
       def setup
-        yield configuration
+        yield self
         nil
       end      
 

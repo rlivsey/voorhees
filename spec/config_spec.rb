@@ -99,19 +99,27 @@ describe Voorhees::Config do
   
   describe "setup" do
     
-    it "should yield the configuration object" do
+    it "should yield self" do
       Voorhees::Config.setup do |c|
-        c.should == Voorhees::Config.configuration
+        c.should == Voorhees::Config
       end
     end
     
-    it "should let you set items on the configuration object" do
+    it "should let you set items on the configuration object as a hash" do
       lambda{
         Voorhees::Config.setup do |c|
           c[:bananas] = 100
         end
       }.should change(Voorhees::Config, :bananas).from(nil).to(100)      
     end
+    
+    it "should let you set items on the configuration object as a method" do
+      lambda{
+        Voorhees::Config.setup do |c|
+          c.monkeys = 100
+        end
+      }.should change(Voorhees::Config, :monkeys).from(nil).to(100)      
+    end    
     
   end
   
