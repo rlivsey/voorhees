@@ -106,11 +106,17 @@ describe Voorhees::Request do
       
       @mock_post = mock(:post, :null_object => true)
       Net::HTTP::Post.stub!(:new).and_return(@mock_post)
+
+      body = '{"something":"result"}'
+      @json_response = Net::HTTPResponse::CODE_TO_OBJ["200"].new("1.1", 200, body)
+      @json_response.stub!(:body).and_return(body)
       
-      @mock_http = MockNetHttp.new
+      @mock_http  = MockNetHttp.new
       @connection = @mock_http.connection
+      @connection.stub!(:request).and_return(@json_response)      
       Net::HTTP.stub!(:new).and_return(@mock_http)
     end    
+    
     
     def perform_catching_errors
       @request.perform
@@ -131,7 +137,7 @@ describe Voorhees::Request do
       @mock_http.should_receive(:open_timeout=).with(@request.timeout)
       @request.perform   
     end
-    
+
     it "should set Net::HTTP#read_timeout" do
       @mock_http.should_receive(:read_timeout=).with(@request.timeout)      
       @request.perform     
@@ -148,9 +154,8 @@ describe Voorhees::Request do
     end
 
     it "should return the response from the service" do
-      response = "some response"
-      @connection.should_receive(:request).and_return(response)
-      @request.perform.should == response
+      @connection.should_receive(:request).and_return(@json_response)
+      @request.perform.body.should == @json_response.body
     end    
 
     
@@ -179,10 +184,9 @@ describe Voorhees::Request do
           end   
 
           it "should return the response from the service" do
-            response = "some response"
             @connection.should_receive(:request).with(@mock_post).exactly(1).times.ordered.and_raise(Timeout::Error.new(nil))                
-            @connection.should_receive(:request).with(@mock_post).exactly(1).times.ordered.and_return(response)
-            @request.perform.should == response          
+            @connection.should_receive(:request).with(@mock_post).exactly(1).times.ordered.and_return(@json_response)
+            @request.perform.body.should == @json_response.body
           end
 
         end
@@ -270,10 +274,9 @@ describe Voorhees::Request do
           end   
 
           it "should return the response from the service" do
-            response = "some response"
             @connection.should_receive(:request).with(@mock_post).exactly(1).times.ordered.and_raise(Errno::ECONNREFUSED)                
-            @connection.should_receive(:request).with(@mock_post).exactly(1).times.ordered.and_return(response)
-            @request.perform.should == response
+            @connection.should_receive(:request).with(@mock_post).exactly(1).times.ordered.and_return(@json_response)
+            @request.perform.body.should == @json_response.body
           end
         end
 

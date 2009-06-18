@@ -35,7 +35,7 @@ module Voorhees
     
     def perform
       setup_request
-      perform_actual_request
+      parse_response(perform_actual_request)
     end
         
     private
@@ -86,6 +86,14 @@ module Voorhees
         end
         
         response
+      end
+    
+      def parse_response(response)
+        json = JSON.parse(response.body)
+        Voorhees::Response.new(json, response.body, response.code, response.message, response.to_hash)
+        
+      rescue JSON::ParserError
+        raise Voorhees::ParseError
       end
     
       def validate
