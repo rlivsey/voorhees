@@ -5,7 +5,6 @@ describe Voorhees::Config do
   before :each do 
     
     Voorhees::Config.clear
-    Voorhees::Config.delete(:logger)
     Voorhees::Config.setup do |c|
       c[:one] = 1
       c[:two] = 2
@@ -21,12 +20,12 @@ describe Voorhees::Config do
     
     it "should default to RAILS_DEFAULT_LOGGER if defined" do
       RAILS_DEFAULT_LOGGER = "something"
-      Voorhees::Config.clear
+      Voorhees::Config.reset
       Voorhees::Config.logger.should == "something"
     end
     
     it "should default to a Logger if RAILS_DEFAULT_LOGGER is not defined" do
-      Voorhees::Config.clear      
+      Voorhees::Config.reset      
       Voorhees::Config.logger.should be_a(Logger)
     end
     

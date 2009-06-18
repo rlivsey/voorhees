@@ -11,7 +11,9 @@ module Voorhees
       
       def defaults
         {
-          :logger => defined?(RAILS_DEFAULT_LOGGER) ? RAILS_DEFAULT_LOGGER : Logger.new(STDOUT)
+          :logger   => defined?(RAILS_DEFAULT_LOGGER) ? RAILS_DEFAULT_LOGGER : Logger.new(STDOUT),
+          :timeout  => 10,
+          :retries  => 0
         }
       end
       
@@ -54,8 +56,12 @@ module Voorhees
         yield configuration
         nil
       end      
-      
+
       def clear
+        @configuration = {}
+      end
+      
+      def reset
         @configuration = defaults
       end
       
