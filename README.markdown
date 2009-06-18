@@ -65,7 +65,7 @@ These can all be overridden on individual requests/services
 
 ## Thanks
 
-The ideas and design came from discussions when refactoring LVS::JSONService the original of which was 
+The ideas and design came from discussions when refactoring [LVS::JSONService](http://github.com/LVS/JSONService) the original of which was 
 developed by [Andy Jeffries](http://github.com/andyjeffries/) for use at LVS
 
 Much discussion with [John Cinnamond](http://github.com/jcinnamond) 
