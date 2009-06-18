@@ -1,6 +1,6 @@
-= Voorhees
+# Voorhees
 
-== Design goals
+## Design goals
 
 * Be as fast as possible
 * Be simple, yet configurable
@@ -8,7 +8,7 @@
 * Don't stomp on object hierarcy (it's a mixin)
 * Lazy load only the objects you need, when you need them
 
-== Example usage
+## Example usage
 
     class User
     
@@ -51,7 +51,7 @@
     User.list(:blah => false)   => raises ParameterRequiredException
     etc...
 
-== Configuration
+## Configuration
 
 Setup global configuration useing Voorhees::Config
 These can all be overridden on individual requests/services
@@ -63,14 +63,14 @@ These can all be overridden on individual requests/services
       c[:encrypted] = true
     end
 
-== Thanks
+## Thanks
 
 The ideas and design came from discussions when refactoring LVS::JSONService the original of which was 
-developed by Andy Jeffries (http://github.com/andyjeffries/) for use at LVS
+developed by [Andy Jeffries](http://github.com/andyjeffries/) for use at LVS
 
-Much discussion with John Cinnamond (http://github.com/jcinnamond) 
-and Jason Lee (http://github.com/jlsync)
+Much discussion with [John Cinnamond](http://github.com/jcinnamond) 
+and [Jason Lee](http://github.com/jlsync)
 
-== Copyright
+## Copyright
 
 Copyright (c) 2009 Richard Livsey. See LICENSE for details.
