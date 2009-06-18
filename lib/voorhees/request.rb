@@ -21,6 +21,10 @@ module Voorhees
       @base_uri || Voorhees::Config[:base_uri]
     end
     
+    def parameters
+      (@defaults || {}).merge(@parameters || {})
+    end
+    
     def timeout
       @timeout  || Voorhees::Config[:timeout]
     end

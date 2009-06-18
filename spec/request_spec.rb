@@ -4,9 +4,12 @@ describe Voorhees::Request do
   
   before :each do 
     @request = Voorhees::Request.new
+    
+    # disable the logger
+    Voorhees::Config.logger = mock(:logger, :null_object => true)
   end
   
-  describe "defaults" do
+  describe "global defaults" do
     
     before :each do
       Voorhees::Config.setup do |c|
@@ -25,6 +28,23 @@ describe Voorhees::Request do
     end
     
   end
+  
+  describe "defaults" do
+    
+    it "should be included in the parameters" do
+      @request.defaults   = {:all => true}
+      @request.parameters = {:order => 'surname'}
+      @request.parameters.should == {:all => true, :order => 'surname'}      
+    end
+    
+    it "should be overridden by matching parameters" do
+      @request.defaults   = {:all => true, :order => 'surname'}
+      @request.parameters = {:all => false}
+      @request.parameters.should == {:all => false, :order => 'surname'}
+    end    
+  
+  end
+  
   
   describe "uri" do
     
