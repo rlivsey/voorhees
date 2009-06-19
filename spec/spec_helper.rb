@@ -12,3 +12,11 @@ require File.expand_path(File.dirname(__FILE__) + '/fixtures/message')
 Spec::Runner.configure do |config|
   
 end
+
+# allow sorting by symbol
+class Symbol
+  def <=>(a)
+    self.to_s <=> a.to_s
+  end
+end
+
