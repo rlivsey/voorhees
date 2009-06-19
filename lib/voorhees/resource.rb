@@ -1,3 +1,4 @@
+require 'pp'
 module Voorhees 
   
   module Resource
@@ -26,11 +27,24 @@ module Voorhees
       end
       
       def method_missing(*args)
-        if json_attributes.include? args[0]
-          return raw_json[args[0].to_s]
+        if json_attributes.include?(args[0])
+          item = raw_json[args[0].to_s]
+          return item.is_a?(Array) ? build_collection_from_json(args[0], item) : item
         end
+        
         super
       end
+      
+      private
+        
+        def build_collection_from_json(name, json)
+          klass = Object.const_get(name.to_s.classify)
+          json.collect do |item|
+            klass.new_from_json(json)
+          end
+        rescue NameError
+          json
+        end
       
     end
     

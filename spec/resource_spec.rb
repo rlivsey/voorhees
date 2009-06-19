@@ -53,8 +53,19 @@ describe User  do
       
     end
     
+    describe "calling a method with the name of a json collection" do
+
+      it "should return an array" do
+        @user.messages.should be_an_instance_of(Array)
+      end
+      
+      it "should infer the type of objects based on the collection name" do
+        @user.messages.each do |m|
+          m.should be_an_instance_of(Message)
+        end
+      end
+    end
   end
-  
 end
 
 def load_json
