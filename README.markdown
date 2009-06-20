@@ -22,18 +22,13 @@
       end
     end
     
-    user = User.get(1)
+    users = User.list(:page => 2)
+    
+    user = users[0]
     user.json_attributes      => [:id, :login, :email]
     user.raw_json             => {:id => 1, :login => 'test', :email => 'bob@example.com'}
     user.login                => 'test'
-    user.login = 'new login'
-    user.login                => 'new login'
-    
     user.messages             => [Message, Message, Message, ...]
-    
-    User.list(:filter => 'xxx') => [User, User, User, ...]
-    User.list(:blah => false)   => raises ParameterRequiredException
-    etc...
 
 See [/examples/](examples/) directory for more.
 
