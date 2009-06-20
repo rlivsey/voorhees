@@ -43,6 +43,8 @@
     user.login = 'new login'
     user.login                => 'new login'
     
+    user.messages             => [Message, Message, Message, ...]
+    
     User.list(:filter => 'xxx') => [User, User, User, ...]
     User.list(:blah => false)   => raises ParameterRequiredException
     etc...
