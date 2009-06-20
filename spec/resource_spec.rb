@@ -31,9 +31,11 @@ describe User  do
       before :each do 
         @request  = mock(:request,  :null_object => true)
         @response = mock(:response, :null_object => true)
+        @objects  = [mock(:object)]
                 
         Voorhees::Request.stub!(:new).and_return(@request)
         @request.stub!(:perform).and_return(@response)
+        @response.stub!(:to_objects).and_return(@objects)
       end
       
       def perform_request
@@ -57,8 +59,8 @@ describe User  do
         perform_request
       end
       
-      it "should return the result of Request#perform" do
-        perform_request.should == @response
+      it "should return the result of Response#to_objects" do
+        perform_request.should == @objects
       end
     end
     
