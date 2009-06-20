@@ -5,4 +5,5 @@ module Voorhees
   class TimeoutError < Error; end
   class UnavailableError < Error; end
   class ParseError < Error; end  
+  class NotResourceError < Error; end
 end

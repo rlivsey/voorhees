@@ -10,6 +10,10 @@ module Voorhees
     end
     
     def to_objects
+      return unless @klass
+      
+      raise Voorhees::NotResourceError.new unless @klass.respond_to?(:new_from_json)
+      
       if @json.is_a?(Array)
         @json.collect do |item|
           @klass.new_from_json(item)

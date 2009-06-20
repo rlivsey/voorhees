@@ -9,6 +9,7 @@ require 'voorhees'
 
 require File.expand_path(File.dirname(__FILE__) + '/fixtures/user')
 require File.expand_path(File.dirname(__FILE__) + '/fixtures/message')
+require File.expand_path(File.dirname(__FILE__) + '/fixtures/not_resource')
 
 Spec::Runner.configure do |config|
   

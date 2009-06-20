@@ -9,7 +9,7 @@ module Voorhees
                   :required,  :defaults,  :parameters,
                   :base_uri
     
-    def initialize(caller_class)
+    def initialize(caller_class=nil)
       @caller_class = caller_class
     end
     
