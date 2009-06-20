@@ -104,8 +104,8 @@ Like json_service, by default it assumes you're getting items of the same class,
 
     def messages
       json_request(Message) do |r|
-        r.path => "/messages.json"
-        r.parameters => {:user_id => self.id}        
+        r.path        = "/messages.json"
+        r.parameters  = {:user_id => self.id}        
       end
     end
 
@@ -120,8 +120,8 @@ If you like you can use this yourself directly.
 This sets up a request identical to the json_request messages example above:
 
     request = Voorhees::Request.new(Message)
-    request.path = "/messages.json"
-    request.parameters => {:user_id => self.id} 
+    request.path        = "/messages.json"
+    request.parameters  = {:user_id => self.id} 
     
 To perform the HTTP request  (returning a Voorhees::Response object):
 
