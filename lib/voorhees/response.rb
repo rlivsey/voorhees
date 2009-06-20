@@ -4,9 +4,10 @@ module Voorhees
     
     attr_reader :json, :klass
     
-    def initialize(json, klass=nil)
-      @json  = json
-      @klass = klass      
+    def initialize(json, klass=nil, hierarchy=nil)
+      @json       = json
+      @hierarchy  = hierarchy
+      @klass      = klass      
     end
     
     def to_objects
@@ -16,10 +17,10 @@ module Voorhees
       
       if @json.is_a?(Array)
         @json.collect do |item|
-          @klass.new_from_json(item)
+          @klass.new_from_json(item, @hierarchy)
         end
       else
-        @klass.new_from_json(@json)
+        @klass.new_from_json(@json, @hierarchy)
       end
     end
     

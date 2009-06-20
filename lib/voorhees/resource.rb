@@ -7,14 +7,15 @@ module Voorhees
       base.send :include, InstanceMethods
       
       base.instance_eval do
-        attr_accessor :raw_json
+        attr_accessor :raw_json, :json_hierarchy
       end
     end    
     
     module ClassMethods
-      def new_from_json(json)
+      def new_from_json(json, hierarchy=nil)
         obj = self.new
-        obj.raw_json = json
+        obj.raw_json       = json
+        obj.json_hierarchy = hierarchy
         obj
       end
       
@@ -53,8 +54,14 @@ module Voorhees
       
       def method_missing(*args)
         if json_attributes.include?(args[0])
-          item = raw_json[args[0].to_s]
-          return item.is_a?(Array) ? build_collection_from_json(args[0], item) : item
+          item  = raw_json[args[0].to_s]
+          klass = json_hierarchy[args[0]] if json_hierarchy
+          
+          if item.is_a?(Array)
+            return build_collection_from_json(args[0], item, klass)
+          else
+            return build_item(item, klass)
+          end
         end
         
         super
@@ -62,7 +69,16 @@ module Voorhees
       
       private
         
-        def build_collection_from_json(name, json)
+        def build_item(json, klass)
+          if klass
+            raise Voorhees::NotResourceError.new unless klass.respond_to?(:new_from_json)
+            klass.new_from_json(json)
+          else
+            json
+          end
+        end
+        
+        def build_collection_from_json(name, json, klass)
           klass = Object.const_get(name.to_s.classify)
           json.collect do |item|
             klass.new_from_json(json)

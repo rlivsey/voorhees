@@ -3,7 +3,8 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 describe Voorhees::Request do
   
   before :each do 
-    @request = Voorhees::Request.new(User)
+    @caller_class = User
+    @request = Voorhees::Request.new(@caller_class)
     
     # disable the logger
     Voorhees::Config.logger = mock(:logger, :null_object => true)
@@ -127,14 +128,16 @@ describe Voorhees::Request do
   describe "perform" do
     
     before :each do
-      @host   = "example.com"
-      @port   = 8080
-      @path   = "/endpoint"
-      @params = {:bananas => 5}
+      @host       = "example.com"
+      @port       = 8080
+      @path       = "/endpoint"
+      @params     = {:bananas => 5}
+      @hierarchy  = {:address => Address}
       
       @request.path       = "http://#{@host}:#{@port}#{@path}"
       @request.timeout    = 10
       @request.retries    = 0
+      @request.hierarchy  = @hierarchy
       @request.parameters = @params
       
       @mock_post = mock(:post, :null_object => true)
@@ -267,11 +270,17 @@ describe Voorhees::Request do
       @request.perform
     end
 
-    it "should return the response from the service" do
-      @connection.should_receive(:request).and_return(@http_response)
-      @request.perform.json.should == @json_response
+    it "should return the response from the service as a Voorhees::Response" do
+      @connection.stub!(:request).and_return(@http_response)
+      @request.perform.should be_a(Voorhees::Response)
     end    
-
+    
+    it "should pass the parsed JSON, caller class and hierarcy to the response" do
+      @connection.stub!(:request).and_return(@http_response)
+            
+      Voorhees::Response.should_receive(:new).with(@json_response, @caller_class, @hierarchy)      
+      @request.perform
+    end
     
     describe "with TimeoutError" do
       

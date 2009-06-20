@@ -5,9 +5,9 @@ module Voorhees
   
   class Request
     
-    attr_accessor :timeout,   :retries,   :path, 
-                  :required,  :defaults,  :parameters,
-                  :base_uri,  :http_method
+    attr_accessor :timeout,   :retries,     :path, 
+                  :required,  :defaults,    :parameters,
+                  :base_uri,  :http_method, :hierarchy
     
     def initialize(caller_class=nil)
       @caller_class = caller_class
@@ -113,7 +113,7 @@ module Voorhees
       end
     
       def parse_response(response)
-        Voorhees::Response.new(JSON.parse(response.body), @caller_class)
+        Voorhees::Response.new(JSON.parse(response.body), @caller_class, @hierarchy)
         
       rescue JSON::ParserError
         raise Voorhees::ParseError
