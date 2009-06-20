@@ -19,12 +19,14 @@ module Voorhees
       end
       
       def json_service(name, request_options={})
-        define_method name do |*args|
-          params    = args[0]
-          json_request do |r|
-            r.parameters = params if params.is_a?(Hash)
-            request_options.each do |option, value|
-              r.send("#{option}=", value)
+        (class << self; self; end).instance_eval do
+          define_method name do |*args|
+            params = args[0]
+            json_request do |r|
+              r.parameters = params if params.is_a?(Hash)
+              request_options.each do |option, value|
+                r.send("#{option}=", value)
+              end
             end
           end
         end
