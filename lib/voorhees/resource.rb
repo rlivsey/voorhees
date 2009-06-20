@@ -55,7 +55,10 @@ module Voorhees
       def method_missing(*args)
         if json_attributes.include?(args[0])
           item  = raw_json[args[0].to_s]
-          klass = json_hierarchy[args[0]] if json_hierarchy
+          
+          if json_hierarchy && klass = json_hierarchy[args[0]] 
+            klass = Object.const_get(klass.to_s.pluralize.classify) if klass.is_a?(Symbol)
+          end
           
           if item.is_a?(Array)
             return build_collection_from_json(args[0], item, klass)

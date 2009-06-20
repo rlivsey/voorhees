@@ -3,9 +3,6 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 describe User  do
   
   before :each do 
-    @hierarchy = {
-      :address => Address
-    }    
     load_json
   end
   
@@ -149,19 +146,15 @@ describe User  do
 
   describe "InstanceMethods" do
     
-    before :each do 
-      user_from_json
-    end
-    
     describe "#raw_json" do
       it "should contain the raw json" do
-        @user.raw_json.should == @json
+        user_from_json.raw_json.should == @json
       end
     end
     
     describe "#json_attributes" do
       it "should contain symbols of the keys of the attributes available" do
-        @user.json_attributes.sort.should == [:address, :email, :id, :messages, :name, :pet, :username]
+        user_from_json.json_attributes.sort.should == [:address, :email, :id, :messages, :name, :pet, :username]
       end
     end
     
@@ -176,17 +169,17 @@ describe User  do
       end
       
       def perform_request
-        @user.json_request{}
+        user_from_json.json_request{}
       end      
       
       it "should pass the request to the class method" do
         User.should_receive(:json_request)
-        @user.json_request{}
+        user_from_json.json_request{}
       end
       
       it "should raise a LocalJumpError exception if a block is not given" do
         lambda{
-          @user.json_request
+          user_from_json.json_request
         }.should raise_error(LocalJumpError)
       end
       
@@ -205,17 +198,17 @@ describe User  do
       
       describe "which is a simple value" do
         it "should return the value of the attribute" do
-          @user.email.should == @json["email"]
+          user_from_json.email.should == @json["email"]
         end
       end
       
       describe "which is a collection" do
         it "should return an array" do
-          @user.messages.should be_an_instance_of(Array)
+          user_from_json.messages.should be_an_instance_of(Array)
         end
 
         it "should infer the type of objects based on the collection name" do
-          @user.messages.each do |m|
+          user_from_json.messages.each do |m|
             m.should be_an_instance_of(Message)
           end
         end        
@@ -224,11 +217,23 @@ describe User  do
       describe "which is a sub-object" do
       
         it "should return as a Hash if the hierarchy is not defined" do
-          @user.pet.should be_a(Hash)
+          @hierarchy = {
+          }          
+          user_from_json.pet.should be_a(Hash)
         end
         
-        it "should return as the right class if the hierarchy is defined" do
-          @user.address.should be_a(Address)
+        it "should return as the right class if the hierarchy is defined as symbol" do
+          @hierarchy = {
+            :address => :address
+          }          
+          user_from_json.address.should be_a(Address)
+        end
+        
+        it "should return as the right class if the hierarchy is defined as Class" do
+          @hierarchy = {
+            :address => Address
+          }
+          user_from_json.address.should be_a(Address)
         end
         
       end
@@ -248,5 +253,5 @@ def load_json
 end
 
 def user_from_json
-  @user = User.new_from_json(@json, @hierarchy)
+  User.new_from_json(@json, @hierarchy)
 end
