@@ -271,6 +271,15 @@ describe User  do
           user_from_json.address.should be_a(Address)
         end
         
+        it "should return as the right class for multiple depths" do
+          @hierarchy = {
+            :address => [Address, {
+              :coords => LatLon
+            }]
+          }
+          user_from_json.address.coords.should be_a(LatLon)          
+        end
+        
       end
       
     end

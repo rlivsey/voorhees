@@ -74,14 +74,22 @@ module Voorhees
         def value_from_json(method_name)
           item = raw_json[method_name.to_s]
           
-          if json_hierarchy && klass = json_hierarchy[method_name] 
+          sub_hierarchy = nil
+          if json_hierarchy && hierarchy = json_hierarchy[method_name] 
+            if hierarchy.is_a?(Array)
+              klass         = hierarchy[0]
+              sub_hierarchy = hierarchy[1]
+            else
+              klass = hierarchy
+            end
+            
             klass = Object.const_get(klass.to_s.pluralize.classify) if klass.is_a?(Symbol)
           end
           
           if item.is_a?(Array)
-            return build_collection_from_json(method_name, item, klass)
+            return build_collection_from_json(method_name, item, klass, sub_hierarchy)
           else
-            return build_item(item, klass)
+            return build_item(item, klass, sub_hierarchy)
           end
         end
         
@@ -99,19 +107,19 @@ module Voorhees
           "
         end
         
-        def build_item(json, klass)
+        def build_item(json, klass, hierarchy)
           if klass
             raise Voorhees::NotResourceError.new unless klass.respond_to?(:new_from_json)
-            klass.new_from_json(json)
+            klass.new_from_json(json, hierarchy)
           else
             json
           end
         end
         
-        def build_collection_from_json(name, json, klass)
-          klass = Object.const_get(name.to_s.classify)
+        def build_collection_from_json(name, json, klass, hierarchy)
+          klass ||= Object.const_get(name.to_s.classify)
           json.collect do |item|
-            klass.new_from_json(json)
+            klass.new_from_json(json, hierarchy)
           end
         rescue NameError
           json

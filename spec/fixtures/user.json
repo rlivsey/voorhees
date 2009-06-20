@@ -6,7 +6,11 @@
   "address":{
     "street":"24 Monkey Close",
     "city":"Somesville",
-    "country":"Somewhere"
+    "country":"Somewhere",
+    "coords":{
+      "lat":52.9876,
+      "lon":12.3456
+    }
   },
   "pet":{
     "kind":"dog",
