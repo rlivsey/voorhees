@@ -10,8 +10,12 @@ module Voorhees
     end
     
     def to_objects
-      @json.collect do |item|
-        @klass.new_from_json(item)
+      if @json.is_a?(Array)
+        @json.collect do |item|
+          @klass.new_from_json(item)
+        end
+      else
+        @klass.new_from_json(@json)
       end
     end
     
