@@ -18,6 +18,20 @@ module Voorhees
         obj
       end
       
+      def json_service(name, request_options={})
+        define_method name do |*args|
+          params    = args[0]
+          response  = json_request do |r|
+                        r.parameters = params if params.is_a?(Hash)
+                        request_options.each do |option, value|
+                          r.send("#{option}=", value)
+                        end
+                      end
+                      
+          response.to_objects
+        end
+      end
+      
       def json_request
         request = Voorhees::Request.new(self)
         yield request

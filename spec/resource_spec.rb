@@ -60,7 +60,65 @@ describe User  do
       it "should return the result of Request#perform" do
         perform_request.should == @response
       end
+    end
+    
+    describe "json_service" do
       
+      before :each do 
+        @service_name = :list
+        @service_attrs = {
+          :timeout  => 100,
+          :required => [:monkeys]
+        }
+        @user = User.new
+      end
+      
+      def define_service
+        User.json_service @service_name, @service_attrs
+      end
+      
+      it "should define a method with the same name as the service" do
+        @user.should_not respond_to(@service_name)
+        define_service
+        @user.should respond_to(@service_name)        
+      end       
+      
+      describe "calling the defined method" do
+        
+        before :each do
+          define_service
+
+          @request  = mock(:request,  :null_object => true)
+          @response = mock(:response, :null_object => true)
+          @objects  = [mock(:object)]
+
+          Voorhees::Request.stub!(:new).and_return(@request)
+          @request.stub!(:perform).and_return(@response)
+        end
+        
+        it "should call User#json_request" do
+          @user.should_receive(:json_request).and_return(@response)
+          @user.list
+        end
+        
+        it "should pass service attributes onto the request" do
+          @service_attrs.each do |key, value|
+            @request.should_receive("#{key}=").with(value)
+          end
+          @user.list
+        end
+        
+        it "should use any hash passed in to set the request parameters" do
+          params = {:monkeys => true}
+          @request.should_receive(:parameters=).with(params)
+          @user.list(params)
+        end
+        
+        it "should return the result of Response#to_objects" do          
+          @response.should_receive(:to_objects).and_return(@objects)          
+          @user.list.should == @objects
+        end
+      end
     end
   end
 
