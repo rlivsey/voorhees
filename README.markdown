@@ -12,29 +12,24 @@
 
     class User
     
-      include Voorhees::Service
-      include Voorhees::Cachable
-      include Voorhees::Encrypted
+      include Voorhees::Resource
       
       json_service :list, :defaults => {:all => true}, 
                           :required => [:filter],
-                          :timeout  => 10.seconds,
-                          :cache    => 10.minutes,
-                          :encrypted=> true
-      
+                          :timeout  => 10.seconds
+            
       def self.get(id)
-        json_request do |request|
-          request.url         = "http://example.com/users/get"
-          request.parameters  = {:id => id}
-          request.timeout     = 10
-          request.retries     = 5
+        json_request do |r|
+          r.url         = "http://example.com/users/get"
+          r.parameters  = {:id => id}
+          r.timeout     = 10
+          r.retries     = 5
         end
       end
     
       def messages
-        json_request do |request|
-          request.url         = "http://example.com/users/#{self.id}/messages"
-          request.item_klass  = Message
+        json_request do |r|
+          r.url = "http://example.com/users/#{self.id}/messages"
         end
       end
     
@@ -42,7 +37,7 @@
     
     user = User.get(1)
     user.json_attributes      => [:id, :login, :email]
-    user.json_data            => {:id => 1, :login => 'test', :email => 'bob@example.com'}
+    user.raw_json             => {:id => 1, :login => 'test', :email => 'bob@example.com'}
     user.login                => 'test'
     user.login = 'new login'
     user.login                => 'new login'
@@ -60,7 +55,6 @@ These can all be overridden on individual requests/services
       c[:logger]    = RAILS_DEFAULT_LOGGER
       c[:timeout]   = 10
       c[:retries]   = 3
-      c[:encrypted] = true
     end
 
 ## Thanks
