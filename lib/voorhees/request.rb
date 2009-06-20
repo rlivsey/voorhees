@@ -7,7 +7,7 @@ module Voorhees
     
     attr_accessor :timeout,   :retries,   :path, 
                   :required,  :defaults,  :parameters,
-                  :base_uri
+                  :base_uri,  :http_method
     
     def initialize(caller_class=nil)
       @caller_class = caller_class
@@ -18,7 +18,11 @@ module Voorhees
     end
     
     def uri
-      path.relative? ? URI.parse("#{base_uri}#{path}") : path  
+      u = path.relative? ? URI.parse("#{base_uri}#{path}") : path  
+      if query = query_string(u)
+        u.query = query
+      end
+      u
     end    
     
     def base_uri
@@ -37,6 +41,10 @@ module Voorhees
       @retries  || Voorhees::Config[:retries]      
     end
     
+    def http_method
+      @http_method  || Voorhees::Config[:http_method]      
+    end
+    
     def perform
       setup_request
       parse_response(perform_actual_request)
@@ -46,9 +54,13 @@ module Voorhees
     
       def setup_request
         @http  = Net::HTTP.new(uri.host, uri.port)
-        @req   = Net::HTTP::Post.new(uri.path)
+        @req   = http_method.new(uri.path)
         
-        @req.form_data = { Voorhees::Config[:json_parameter_name] => parameters.to_json }
+        @req.form_data =  if Voorhees::Config[:post_json] 
+                            { Voorhees::Config[:post_json_parameter] => parameters.to_json }
+                          else
+                            parameters
+                          end
         
         @http.open_timeout = timeout || Voorhees::Config[:timeout]
         @http.read_timeout = timeout || Voorhees::Config[:timeout]        
@@ -92,6 +104,14 @@ module Voorhees
         response
       end
     
+      def query_string(uri)
+        return if post?
+        query_string_parts = []
+        query_string_parts << uri.query unless uri.query.blank?
+        query_string_parts += parameters.collect{|k,v| "#{k}=#{v}" } unless parameters.empty?
+        query_string_parts.size > 0 ? query_string_parts.join('&') : nil
+      end
+    
       def parse_response(response)
         Voorhees::Response.new(JSON.parse(response.body), @caller_class)
         
@@ -101,6 +121,10 @@ module Voorhees
     
       def validate
         raise Voorhees::ParameterMissingError if @required && !@required.all?{|x| @parameters.keys.include?(x) }
+      end
+    
+      def post?
+        http_method == Net::HTTP::Post
       end
     
   end

@@ -14,7 +14,7 @@ module Voorhees
           :logger              => defined?(RAILS_DEFAULT_LOGGER) ? RAILS_DEFAULT_LOGGER : Logger.new(STDOUT),
           :timeout             => 10,
           :retries             => 0,
-          :json_parameter_name => "object_request"
+          :http_method         => Net::HTTP::Get
         }
       end
       
