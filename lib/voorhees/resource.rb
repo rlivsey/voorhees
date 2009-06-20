@@ -1,4 +1,3 @@
-require 'pp'
 module Voorhees 
   
   module Resource
@@ -18,12 +17,24 @@ module Voorhees
         obj.raw_json = json
         obj
       end
+      
+      def json_request
+        request = Voorhees::Request.new(self)
+        yield request
+        request.perform
+      end
     end
     
     module InstanceMethods
       
       def json_attributes
         @json_attributes ||= @raw_json.keys.collect{|x| x.to_sym}
+      end
+      
+      def json_request
+        self.class.json_request do |r|
+          yield r
+        end
       end
       
       def method_missing(*args)

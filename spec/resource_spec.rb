@@ -25,6 +25,43 @@ describe User  do
         user_from_json.should be_an_instance_of(User)
       end  
     end
+    
+    describe "json_request" do
+      
+      before :each do 
+        @request  = mock(:request,  :null_object => true)
+        @response = mock(:response, :null_object => true)
+                
+        Voorhees::Request.stub!(:new).and_return(@request)
+        @request.stub!(:perform).and_return(@response)
+      end
+      
+      def perform_request
+        User.json_request{}
+      end
+      
+      it "should yeild a request" do
+        User.json_request do |r|
+          r.should == @request
+        end
+      end
+      
+      it "should raise a LocalJumpError exception if a block is not given" do
+        lambda{
+          User.json_request
+        }.should raise_error(LocalJumpError)
+      end
+      
+      it "should implicitly call Request#perform" do
+        @request.should_receive(:perform).once
+        perform_request
+      end
+      
+      it "should return the result of Request#perform" do
+        perform_request.should == @response
+      end
+      
+    end
   end
 
   describe "InstanceMethods" do
@@ -43,6 +80,42 @@ describe User  do
       it "should contain symbols of the keys of the attributes available" do
         @user.json_attributes.sort.should == [:email, :id, :messages, :name, :username]
       end
+    end
+    
+    describe "#json_request" do
+      
+      before :each do 
+        @request  = mock(:request,  :null_object => true)
+        @response = mock(:response, :null_object => true)
+                
+        Voorhees::Request.stub!(:new).and_return(@request)
+        @request.stub!(:perform).and_return(@response)        
+      end
+      
+      def perform_request
+        @user.json_request{}
+      end      
+      
+      it "should pass the request to the class method" do
+        User.should_receive(:json_request)
+        @user.json_request{}
+      end
+      
+      it "should raise a LocalJumpError exception if a block is not given" do
+        lambda{
+          @user.json_request
+        }.should raise_error(LocalJumpError)
+      end
+      
+      it "should implicitly call Request#perform" do
+        @request.should_receive(:perform).once
+        perform_request
+      end
+      
+      it "should return the result of Request#perform" do
+        perform_request.should == @response
+      end
+      
     end
     
     describe "calling method with the name of a json attribute" do
