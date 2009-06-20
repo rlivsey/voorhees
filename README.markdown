@@ -35,7 +35,7 @@
     User.list(:blah => false)   => raises ParameterRequiredException
     etc...
 
-See /examples/ directory for more.
+See [/examples/](examples/) directory for more.
 
 ## A bit more in-depth
 
