@@ -93,7 +93,7 @@ module Voorhees
       end
     
       def parse_response(response)
-        Voorhees::Response.new(@caller_class, JSON.parse(response.body))
+        Voorhees::Response.new(JSON.parse(response.body), @caller_class)
         
       rescue JSON::ParserError
         raise Voorhees::ParseError

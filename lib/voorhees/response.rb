@@ -2,11 +2,11 @@ module Voorhees
   
   class Response
     
-    attr_reader :klass, :json
+    attr_reader :json, :klass
     
-    def initialize(klass, json)
-      @klass = klass
+    def initialize(json, klass=nil)
       @json  = json
+      @klass = klass      
     end
     
     def to_objects

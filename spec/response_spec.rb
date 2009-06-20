@@ -86,5 +86,5 @@ def build_response(fixture)
     body = f.read
   end
 
-  @response = Voorhees::Response.new(@klass, JSON.parse(body))
+  @response = Voorhees::Response.new(JSON.parse(body), @klass)
 end
