@@ -53,24 +53,51 @@ module Voorhees
       end
       
       def method_missing(*args)
-        if json_attributes.include?(args[0])
-          item  = raw_json[args[0].to_s]
-          
-          if json_hierarchy && klass = json_hierarchy[args[0]] 
-            klass = Object.const_get(klass.to_s.pluralize.classify) if klass.is_a?(Symbol)
-          end
-          
-          if item.is_a?(Array)
-            return build_collection_from_json(args[0], item, klass)
-          else
-            return build_item(item, klass)
-          end
+        method_name = args[0]
+        
+        if json_attributes.include?(method_name)
+          value = value_from_json(method_name)
+          build_methods(method_name, value)
+          return value
+        end
+        
+        if method_name.to_s =~ /(.+)=$/ && json_attributes.include?($1.to_sym)
+          build_methods($1, args[1])
+          return
         end
         
         super
       end
       
       private
+        
+        def value_from_json(method_name)
+          item = raw_json[method_name.to_s]
+          
+          if json_hierarchy && klass = json_hierarchy[method_name] 
+            klass = Object.const_get(klass.to_s.pluralize.classify) if klass.is_a?(Symbol)
+          end
+          
+          if item.is_a?(Array)
+            return build_collection_from_json(method_name, item, klass)
+          else
+            return build_item(item, klass)
+          end
+        end
+        
+        def build_methods(name, value)
+          self.instance_variable_set("@#{name}".to_sym, value)
+          
+          instance_eval "          
+            def #{name}
+              @#{name} ||= value_from_json(:#{name})
+            end
+          
+            def #{name}=(val)
+              @#{name} = val
+            end
+          "
+        end
         
         def build_item(json, klass)
           if klass

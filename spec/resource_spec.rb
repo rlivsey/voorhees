@@ -194,7 +194,42 @@ describe User  do
       
     end
     
+    describe "calling assignment method with name of a json attribute" do
+
+      it "should define an assignment method" do
+        user = user_from_json
+        
+        user.should_not respond_to(:email=)
+        user.email = "test"
+        user.should respond_to(:email=)
+      end
+      
+      it "should assign the value" do
+        user = user_from_json
+        new_email = "a_new_address@example.com"
+        
+        user.email = new_email
+        user.email.should == new_email
+      end
+      
+    end
+    
     describe "calling method with the name of a json attribute" do
+      
+      it "should define a method of the same name" do
+        user = user_from_json
+        
+        user.should_not respond_to(:email)
+        user.email
+        user.should respond_to(:email)
+      end
+      
+      it "should return the correct data from defined methods" do
+        user = user_from_json
+        
+        user.email # first access, now it's defined
+        user.email.should == @json["email"]
+      end
       
       describe "which is a simple value" do
         it "should return the value of the attribute" do
