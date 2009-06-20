@@ -78,6 +78,11 @@ This sets up a class method
 
     User.list(:page => 3)   =>  [User, User, User, ...] 
 
+By default it assumes you're getting items of the same class, you can override this like so:
+    
+    json_service :list, :path   => "/users.json",
+                        :class  => OtherClass
+
 #### json_request
 
 This is used in instance methods:
@@ -95,7 +100,7 @@ This is used in instance methods:
 
     User.new.friends(:limit => 2)  => [User, User]
 
-By default it assumes you're getting items of the same class, you can override this like so:
+Like json_service, by default it assumes you're getting items of the same class, you can override this like so:
 
     def messages
       json_request(Message) do |r|

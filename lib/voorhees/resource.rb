@@ -20,10 +20,11 @@ module Voorhees
       end
       
       def json_service(name, request_options={})
+        klass = request_options.delete(:class) || self
         (class << self; self; end).instance_eval do
           define_method name do |*args|
             params = args[0]
-            json_request do |r|
+            json_request(klass) do |r|
               r.parameters = params if params.is_a?(Hash)
               request_options.each do |option, value|
                 r.send("#{option}=", value)
@@ -46,8 +47,8 @@ module Voorhees
         @json_attributes ||= @raw_json.keys.collect{|x| x.to_sym}
       end
       
-      def json_request
-        self.class.json_request do |r|
+      def json_request(klass=nil)
+        self.class.json_request(klass) do |r|
           yield r
         end
       end
