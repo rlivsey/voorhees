@@ -30,8 +30,8 @@ module Voorhees
         end
       end
       
-      def json_request
-        request = Voorhees::Request.new(self)
+      def json_request(klass=nil)
+        request = Voorhees::Request.new(klass || self)
         yield request
         request.perform.to_objects
       end

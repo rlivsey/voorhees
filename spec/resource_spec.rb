@@ -42,6 +42,20 @@ describe User  do
         User.json_request{}
       end
       
+
+      it "should call Request.new with the current class if no class is passed" do
+        Voorhees::Request.should_receive(:new).with(User).and_return(@request)
+        perform_request
+      end
+      
+      it "should call Request.new with the specified class if a class is passed" do
+        Voorhees::Request.should_receive(:new).with(Message).and_return(@request)
+        User.json_request(Message) do |request|
+          # ...
+        end
+      end
+      
+      
       it "should yeild a request" do
         User.json_request do |r|
           r.should == @request
