@@ -41,7 +41,6 @@ These can all be overridden on individual requests/services
 
     Voorhees::Config.setup do |c|
       c[:base_uri]  = "http://api.example.com/json"
-      c[:required]  = [:something]
       c[:defaults]  = {:api_version => 2}
       c[:timeout]   = 10
       c[:retries]   = 3
