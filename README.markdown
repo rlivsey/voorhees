@@ -30,7 +30,7 @@
     user.login                => 'test'
     user.messages             => [Message, Message, Message, ...]
 
-See [/examples/](examples/) directory for more.
+See [/examples/](master/examples/) directory for more.
 
 ## A bit more in-depth
 
