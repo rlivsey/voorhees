@@ -59,15 +59,12 @@ module Voorhees
         if json_attributes.include?(method_name)
           value = value_from_json(method_name)
           build_methods(method_name, value)
-          return value
-        end
-        
-        if method_name.to_s =~ /(.+)=$/ && json_attributes.include?($1.to_sym)
+          value
+        elsif method_name.to_s =~ /(.+)=$/ && json_attributes.include?($1.to_sym)
           build_methods($1, args[1])
-          return
+        else        
+          super
         end
-        
-        super
       end
       
       private
@@ -88,9 +85,9 @@ module Voorhees
           end
           
           if item.is_a?(Array)
-            return build_collection_from_json(method_name, item, klass, sub_hierarchy)
+            build_collection_from_json(method_name, item, klass, sub_hierarchy)
           else
-            return build_item(item, klass, sub_hierarchy)
+            build_item(item, klass, sub_hierarchy)
           end
         end
         
