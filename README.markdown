@@ -47,21 +47,28 @@ These can all be overridden on individual requests/services
       c[:retries]   = 3
     end
 
-#### System options
+#### Global options
 
 * logger: set a logger to use for debug messages, defaults to Logger.new(STDOUT) or RAILS_DEFAULT_LOGGER if it's defined
 
-#### Request options
+#### Request global options
+
+These can be set in the global config and overridden on individual services/requests
 
 * base_uri: Prepend all paths with this, usually the domain of the service
 * defaults: A hash of default parameters
-* hierarchy: Define the class hierarchy for nested data - see below for info
 * http_method: The Net::HTTP method to use. One of Net::HTTP::Get (default), Net::HTTP::Post, Net::HTTP::Put or Net::HTTP::Delete 
+* retries: Number of times to retry if it fails to load data from the service
+* timeout: Number of seconds to wait for the service to send data
+
+#### Request specific options
+
+These cannot be globally set and can only be defined on individual services/requests
+
+* hierarchy: Define the class hierarchy for nested data - see below for info
 * parameters: Hash of data to send along with the request, overrides any defaults
 * path: Path to the service. Can be relative if you have a base_uri set.
 * required: Array of required parameters. Raises a Voorhees::ParameterMissingError if a required parameter is not set.
-* retries: Number of times to retry if it fails to load data from the service
-* timeout: Number of seconds to wait for the service to send data
 
 ### Services and Requests
 
