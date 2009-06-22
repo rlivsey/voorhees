@@ -1,6 +1,14 @@
 require 'uri'
 require 'net/http'
 
+begin
+  require 'system_timer'
+  VoorheesTimer = SystemTimer
+rescue LoadError
+  require 'timeout'
+  VoorheesTimer = Timeout
+end
+
 module Voorhees 
   
   class Request
@@ -77,9 +85,11 @@ module Voorhees
         begin        
           retries_left -= 1
           
-          response = @http.start do |connection| 
-            connection.request(@req) 
-          end
+          response = VoorheesTimer.timeout(timeout) do
+                       @http.start do |connection| 
+                         connection.request(@req) 
+                       end
+                     end
           
         rescue Timeout::Error
           if retries_left >= 0

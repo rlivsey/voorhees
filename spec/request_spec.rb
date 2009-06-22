@@ -284,13 +284,21 @@ describe Voorhees::Request do
     
     describe "with TimeoutError" do
       
-      it "should raise a Voorhees::TimeoutError" do
+      it "should raise a Voorhees::TimeoutError when Timeout::Error is from connection" do
         @connection.stub!(:request).and_raise(Timeout::Error.new(nil))
         
         lambda{
           @request.perform
         }.should raise_error(Voorhees::TimeoutError)
       end
+      
+      it "should raise a Voorhees::TimeoutError when Timeout::Error is from VoorheesTimer" do
+        VoorheesTimer.stub!(:timeout).and_raise(Timeout::Error.new(nil))
+        
+        lambda{
+          @request.perform
+        }.should raise_error(Voorhees::TimeoutError)
+      end      
       
       describe "with retries" do
 
