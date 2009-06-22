@@ -69,6 +69,16 @@ These cannot be globally set and can only be defined on individual services/requ
 * path: Path to the service. Can be relative if you have a base_uri set.
 * required: Array of required parameters. Raises a Voorhees::ParameterMissingError if a required parameter is not set.
 
+### Timeouts and Retries
+
+As well as setting the open_timeout/read_timeout of Net::HTTP, we also wrap each request in a timeout check.
+
+If [SystemTimer](http://ph7spot.com/articles/system_timer) is installed it will use this, otherwise it falls back on the Timeout library.
+
+If the request fails with a Timeout::Error, or a Errno::ECONNREFUSED, we attept the request again upto the number of retries specified.
+
+For Errno::ECONNREFUSED errors, we also sleep for 1 second to give the service a chance to wake up.
+
 ### Services and Requests
 
 There are 3 ways to communicate with the service.
