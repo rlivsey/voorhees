@@ -74,8 +74,8 @@ module Voorhees
                             parameters
                           end
         
-        @http.open_timeout = timeout || Voorhees::Config[:timeout]
-        @http.read_timeout = timeout || Voorhees::Config[:timeout]        
+        @http.open_timeout = timeout
+        @http.read_timeout = timeout
       end
     
       def perform_actual_request
