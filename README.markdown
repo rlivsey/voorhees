@@ -207,6 +207,12 @@ With that we can now do:
     users[0].name               => "Bobby Tables"
     users[0].address.country    => "Somewhere"
     users[0].address.coords.lat => 52.9876
+
+### Requirements
+
+* A JSON library which supports JSON.parse
+* ActiveSupport
+* SystemTimer - falls back on Timer if it's not available
     
 ## Thanks
 
