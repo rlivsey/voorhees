@@ -127,7 +127,7 @@ module Voorhees
       end
     
       def parse_response(response)
-        Voorhees::Response.new(JSON.parse(response.body), @caller_class, @hierarchy)
+        Voorhees::Config[:response_class].new(JSON.parse(response.body), @caller_class, @hierarchy)
       rescue JSON::ParserError
         raise Voorhees::ParseError
       end
