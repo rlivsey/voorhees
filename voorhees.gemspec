@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{voorhees}
-  s.version = "0.1.3"
+  s.version = "0.1.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Richard Livsey"]
-  s.date = %q{2009-06-21}
+  s.date = %q{2009-06-24}
   s.email = %q{richard@livsey.org}
   s.extra_rdoc_files = [
     "LICENSE",
@@ -22,6 +22,7 @@ Gem::Specification.new do |s|
      "lib/voorhees.rb",
      "lib/voorhees/config.rb",
      "lib/voorhees/exceptions.rb",
+     "lib/voorhees/logging.rb",
      "lib/voorhees/request.rb",
      "lib/voorhees/resource.rb",
      "lib/voorhees/response.rb",
