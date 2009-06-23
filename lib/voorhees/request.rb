@@ -79,8 +79,9 @@ module Voorhees
       end
     
       def perform_actual_request
-        
         retries_left = retries
+        
+        Voorhees.debug("Performing #{http_method} request for #{uri.to_s}")
         
         begin        
           retries_left -= 1
@@ -93,25 +94,27 @@ module Voorhees
           
         rescue Timeout::Error
           if retries_left >= 0
-            Voorhees::Config.logger.debug("Retrying due to Timeout::Error (#{uri.to_s})")            
+            Voorhees.debug("Retrying due to Timeout::Error (#{uri.to_s})")            
             retry
           end
           
+          Voorhees.debug("Request failed due to Timeout::Error (#{uri.to_s})")
           raise Voorhees::TimeoutError.new
           
         rescue Errno::ECONNREFUSED
           if retries_left >= 0          
-            Voorhees::Config.logger.debug("Retrying due to Errno::ECONNREFUSED (#{uri.to_s})")            
+            Voorhees.debug("Retrying due to Errno::ECONNREFUSED (#{uri.to_s})")            
             sleep(1) 
             retry
           end
           
+          Voorhees.debug("Request failed due to Errno::ECONREFUSED (#{uri.to_s})")
           raise Voorhees::UnavailableError.new
           
         end
 
         if response.is_a?(Net::HTTPNotFound)
-          Voorhees::Config.logger.error("Service Not Found (#{uri.to_s})")           
+          Voorhees.debug("Request failed due to Net::HTTPNotFound (#{uri.to_s})")           
           raise Voorhees::NotFoundError.new
         end
         
@@ -129,6 +132,7 @@ module Voorhees
       def parse_response(response)
         Voorhees::Config[:response_class].new(JSON.parse(response.body), @caller_class, @hierarchy)
       rescue JSON::ParserError
+        Voorhees.debug("Parsing JSON failed.\nFirst 500 chars of body:\n#{response.body[0...500]}")
         raise Voorhees::ParseError
       end
     

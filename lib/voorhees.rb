@@ -1,3 +1,4 @@
+require "voorhees/logging"
 require "voorhees/config"
 require "voorhees/exceptions"
 require "voorhees/request"
