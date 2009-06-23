@@ -8,6 +8,7 @@ module Voorhees
       
       base.instance_eval do
         attr_accessor :raw_json, :json_hierarchy
+        undef_method :id        
       end
     end    
     

@@ -216,6 +216,11 @@ describe User  do
     
     describe "calling method with the name of a json attribute" do
       
+      it "should return the correct data from #id" do
+        user = user_from_json
+        user.id.should == @json["id"]
+      end
+      
       it "should define a method of the same name" do
         user = user_from_json
         
