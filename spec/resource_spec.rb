@@ -153,8 +153,8 @@ describe User  do
     end
     
     describe "#json_attributes" do
-      it "should contain symbols of the keys of the attributes available" do
-        user_from_json.json_attributes.sort.should == [:address, :email, :id, :messages, :name, :pet, :username]
+      it "should contain symbols of the keys of the attributes available as underscored" do
+        user_from_json.json_attributes.sort.should == [:address, :camel_case, :email, :id, :messages, :name, :pet, :username]
       end
     end
     
@@ -239,6 +239,12 @@ describe User  do
       describe "which is a simple value" do
         it "should return the value of the attribute" do
           user_from_json.email.should == @json["email"]
+        end
+      end
+      
+      describe "which is camelCase in the JSON" do
+        it "should return the value of the attribute" do
+          user_from_json.camel_case.should == @json["camelCase"]
         end
       end
       

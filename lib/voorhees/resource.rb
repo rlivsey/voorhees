@@ -45,7 +45,7 @@ module Voorhees
     module InstanceMethods
       
       def json_attributes
-        @json_attributes ||= @raw_json.keys.collect{|x| x.to_sym}
+        @json_attributes ||= @raw_json.keys.collect{|x| x.underscore.to_sym}
       end
       
       def json_request(klass=nil)
@@ -56,7 +56,6 @@ module Voorhees
       
       def method_missing(*args)
         method_name = args[0]
-        
         if json_attributes.include?(method_name)
           value = value_from_json(method_name)
           build_methods(method_name, value)
@@ -71,7 +70,7 @@ module Voorhees
       private
         
         def value_from_json(method_name)
-          item = raw_json[method_name.to_s]
+          item = raw_json[method_name.to_s] || raw_json[method_name.to_s.camelize(:lower)]
           
           sub_hierarchy = nil
           if json_hierarchy && hierarchy = json_hierarchy[method_name] 

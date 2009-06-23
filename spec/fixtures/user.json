@@ -12,6 +12,7 @@
       "lon":12.3456
     }
   },
+  "camelCase":"camel",
   "pet":{
     "kind":"dog",
     "name":"spot"
