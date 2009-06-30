@@ -157,7 +157,7 @@ describe Voorhees::Request do
       body = '{"something":"result"}'
       @http_response = Net::HTTPResponse::CODE_TO_OBJ["200"].new("1.1", 200, body)
       @http_response.stub!(:body).and_return(body)
-      @json_response = JSON.parse(body)
+      @json_response = body
       
       @mock_http  = MockNetHttp.new
       @connection = @mock_http.connection
@@ -275,7 +275,7 @@ describe Voorhees::Request do
       @request.perform.should be_a(Voorhees::Response)
     end    
     
-    it "should pass the parsed JSON, caller class and hierarcy to the response" do
+    it "should pass the json body, caller class and hierarcy to the response" do
       @connection.stub!(:request).and_return(@http_response)
             
       Voorhees::Response.should_receive(:new).with(@json_response, @caller_class, @hierarchy)      
@@ -317,7 +317,7 @@ describe Voorhees::Request do
           it "should return the response from the service" do
             @connection.should_receive(:request).with(@mock_get).exactly(1).times.ordered.and_raise(Timeout::Error.new(nil))                
             @connection.should_receive(:request).with(@mock_get).exactly(1).times.ordered.and_return(@http_response)
-            @request.perform.json.should == @json_response
+            @request.perform.body.should == @json_response
           end
 
         end
@@ -407,7 +407,7 @@ describe Voorhees::Request do
           it "should return the response from the service" do
             @connection.should_receive(:request).with(@mock_get).exactly(1).times.ordered.and_raise(Errno::ECONNREFUSED)                
             @connection.should_receive(:request).with(@mock_get).exactly(1).times.ordered.and_return(@http_response)
-            @request.perform.json.should == @json_response
+            @request.perform.body.should == @json_response
           end
         end
 

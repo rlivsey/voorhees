@@ -2,12 +2,19 @@ module Voorhees
   
   class Response
     
-    attr_reader :json, :klass
+    attr_reader :body, :klass
     
-    def initialize(json, klass=nil, hierarchy=nil)
-      @json       = json
+    def initialize(body, klass=nil, hierarchy=nil)
+      @body       = body
       @hierarchy  = hierarchy
       @klass      = klass      
+    end
+    
+    def json
+      @json ||= JSON.parse(@body)
+    rescue JSON::ParserError
+      Voorhees.debug("Parsing JSON failed.\nFirst 500 chars of body:\n#{response.body[0...500]}")
+      raise Voorhees::ParseError
     end
     
     def to_objects
@@ -15,12 +22,12 @@ module Voorhees
       
       raise Voorhees::NotResourceError.new unless @klass.respond_to?(:new_from_json)
       
-      if @json.is_a?(Array)
-        @json.collect do |item|
+      if json.is_a?(Array)
+        json.collect do |item|
           @klass.new_from_json(item, @hierarchy)
         end
       else
-        @klass.new_from_json(@json, @hierarchy)
+        @klass.new_from_json(json, @hierarchy)
       end
     end
     

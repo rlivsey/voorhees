@@ -36,13 +36,19 @@ describe User  do
     describe "json_request" do
       
       before :each do 
+        @json_string= "{}"
+        @json_hash  = {}
+        
         @request  = mock(:request,  :null_object => true)
         @response = mock(:response, :null_object => true)
         @objects  = [mock(:object)]
                 
         Voorhees::Request.stub!(:new).and_return(@request)
         @request.stub!(:perform).and_return(@response)
+        
         @response.stub!(:to_objects).and_return(@objects)
+        @response.stub!(:json).and_return(@json_hash)        
+        @response.stub!(:body).and_return(@json_string)            
       end
       
       def perform_request
@@ -57,7 +63,7 @@ describe User  do
       
       it "should call Request.new with the specified class if a class is passed" do
         Voorhees::Request.should_receive(:new).with(Message).and_return(@request)
-        User.json_request(Message) do |request|
+        User.json_request(:class => Message) do |request|
           # ...
         end
       end
@@ -80,9 +86,26 @@ describe User  do
         perform_request
       end
       
-      it "should return the result of Response#to_objects" do
+      it "should return the result of Response#to_objects if :returning is not set" do
         perform_request.should == @objects
       end
+      
+      it "should return the JSON string if :returning is set to :raw" do
+        User.json_request(:returning => :raw){}.should == @json_string
+      end
+      
+      it "should return the JSON hash if :returning is set to :json" do
+        User.json_request(:returning => :json){}.should == @json_hash
+      end
+      
+      it "should return the objects string if :returning is set to :objects" do
+        User.json_request(:returning => :objects){}.should == @objects
+      end
+      
+      it "should return the response if :returning is set to :response" do
+        User.json_request(:returning => :response){}.should == @response
+      end
+              
     end
     
     describe "json_service" do

@@ -25,7 +25,7 @@ module Voorhees
         (class << self; self; end).instance_eval do
           define_method name do |*args|
             params = args[0]
-            json_request(klass) do |r|
+            json_request(:class => klass) do |r|
               r.parameters = params if params.is_a?(Hash)
               request_options.each do |option, value|
                 r.send("#{option}=", value)
@@ -35,10 +35,21 @@ module Voorhees
         end
       end
       
-      def json_request(klass=nil)
-        request = Voorhees::Request.new(klass || self)
+      def json_request(options={})
+        request = Voorhees::Request.new(options[:class] || self)
         yield request
-        request.perform.to_objects
+        response = request.perform
+        
+        case options[:returning]
+        when :raw
+          response.body
+        when :json
+          response.json
+        when :response
+          response
+        else
+          response.to_objects
+        end
       end
     end
     
@@ -48,8 +59,8 @@ module Voorhees
         @json_attributes ||= @raw_json.keys.collect{|x| x.underscore.to_sym}
       end
       
-      def json_request(klass=nil)
-        self.class.json_request(klass) do |r|
+      def json_request(options={})
+        self.class.json_request(options) do |r|
           yield r
         end
       end

@@ -59,7 +59,7 @@ module Voorhees
     
     def perform
       setup_request
-      parse_response(perform_actual_request)
+      build_response(perform_actual_request)
     end
         
     private
@@ -129,11 +129,8 @@ module Voorhees
         query_string_parts.size > 0 ? query_string_parts.join('&') : nil
       end
     
-      def parse_response(response)
-        Voorhees::Config[:response_class].new(JSON.parse(response.body), @caller_class, @hierarchy)
-      rescue JSON::ParserError
-        Voorhees.debug("Parsing JSON failed.\nFirst 500 chars of body:\n#{response.body[0...500]}")
-        raise Voorhees::ParseError
+      def build_response(response)
+        Voorhees::Config[:response_class].new(response.body, @caller_class, @hierarchy)
       end
     
       def validate

@@ -89,5 +89,5 @@ def build_response(fixture)
   @hierarchy = {
     :address => Address
   }
-  @response = Voorhees::Response.new(JSON.parse(body), @klass, @hierarchy)
+  @response = Voorhees::Response.new(body, @klass, @hierarchy)
 end
