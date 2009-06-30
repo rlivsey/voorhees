@@ -16,7 +16,7 @@
       json_service :list, :path => "/users/find.json"
     
       def messages
-        json_request(Message) do |r|
+        json_request(:class => Message) do |r|
           r.path = "/#{self.id}/messages.json"
         end
       end
