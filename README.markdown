@@ -119,13 +119,26 @@ This is used in instance methods:
 Like json_service, by default it assumes you're getting items of the same class, you can override this like so:
 
     def messages
-      json_request(Message) do |r|
+      json_request(:class => Message) do |r|
         r.path        = "/messages.json"
         r.parameters  = {:user_id => self.id}        
       end
     end
 
     User.new.messages  => [Message, Message, ...]
+
+By default a json_request call will convert the JSON to objects, you can make it return something else by setting the :returning property like so:
+
+    json_request(:returning => :raw) do |r|
+      ...
+    end
+
+The returning property can be set to the following:
+
+* :raw      => the raw JSON response as a string
+* :json     => the JSON parsed to a ruby hash (through JSON.parse)
+* :response => the Voorhees::Response object
+* :objects  => casts the JSON into objects (the default)
 
 #### Voorhees::Request
 
