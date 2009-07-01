@@ -7,6 +7,7 @@ describe Voorhees::Request do
     @request = Voorhees::Request.new(@caller_class)
     
     # disable the logger
+    Voorhees::Config.reset
     Voorhees::Config.logger = mock(:logger, :null_object => true)
   end
   
